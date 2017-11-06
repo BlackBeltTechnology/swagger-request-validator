@@ -6,8 +6,8 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>OSGi encryption parent</name>
-    <description>Parent project of encryption components.</description>
+    <name>Swagger request validator parent</name>
+    <description>Parent project of swagger request validator.</description>
 
     <url>http://github.com/BlackBeltTechnology/swagger-request-validator</url>
 
@@ -63,7 +63,7 @@
         <lombok.version>1.16.16</lombok.version>
         <slf4j.version>1.7.25</slf4j.version>
 
-        <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
+        <findbugs.version>3.0.1</findbugs.version>
         <jgitflow-maven-plugin.version>1.0-m5.1</jgitflow-maven-plugin.version>
 
         <atlassian-swagger-request-validator.version>1.2.4</atlassian-swagger-request-validator.version>
@@ -93,7 +93,13 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
-            <version>${findbugs.annotations.version}</version>
+            <version>${findbugs.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${findbugs.version}</version>
             <scope>provided</scope>
         </dependency>
 

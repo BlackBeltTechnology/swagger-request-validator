@@ -1,6 +1,5 @@
 package hu.blackbelt.swagger.services;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -14,5 +13,5 @@ public interface Validator {
      * @param request HTTP request
      * @return list of validation errors
      */
-    @Nonnull List<ValidationError> validate(Object request); // TODO: change type to HTTP
+    List<ValidationError> validate(Object request); // TODO: change type to HTTP
 }

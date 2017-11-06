@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<features name="swagger-request-validator-feature-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
-    <feature name="swagger-request-validator" description="Swagger request validator services" version="${project.version}">
-        <!--requirement>osgi.ee;filter:=&quot;(&amp;(osgi.ee=JavaSE)(version&gt;=${requirement.java.version}))&quot;</requirement-->
-
+<features name="swagger-request-validator-feature-1.0.0-SNAPSHOT" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
+    <feature name="swagger-request-validator" description="Bundles for Swagger request validator"
+             version="1.0.0-SNAPSHOT">
         <feature>json-schema-validator</feature>
         <feature>swagger</feature>
 
-        <!--bundle start-level="60"><![CDATA[wrap:mvn:com.atlassian.oai/swagger-request-validator-core/1.2.4$Bundle-ManifestVersion=2&Bundle-Name=Swagger request validator&Bundle-SymbolicName=com.atlassian.swagger-request-validator&Bundle-Version=1.2.4]]></bundle-->
-        <bundle start-level="60">mvn:com.atlassian.oai/swagger-request-validator-core/${atlassian-swagger-request-validator.version}</bundle>
+        <feature prerequisite="true">wrap</feature>
 
-        <bundle start-level="40">mvn:hu.blackbelt/swagger-request-validator-services/${project.version}</bundle>
+        <bundle start-level="60"><![CDATA[wrap:mvn:com.atlassian.oai/swagger-request-validator-core/1.2.0$Bundle-ManifestVersion=2&Bundle-Name=Swagger rrrrrrrequest validator&Bundle-SymbolicName=com.atlassian.swagger-request-validator&Bundle-Version=1.2.0]]></bundle>
     </feature>
 
     <feature name="guava" version="16.0">
         <bundle start-level="40">mvn:com.google.guava/guava/16.0</bundle>
-    </feature>
-    <feature name="guava" version="18.0">
-        <bundle start-level="40">mvn:com.google.guava/guava/18.0</bundle>
     </feature>
     <feature name="guava" version="20.0">
         <bundle start-level="40">mvn:com.google.guava/guava/20.0</bundle>
@@ -24,6 +19,27 @@
 
     <feature name="joda-time" version="2.9.9">
         <bundle start-level="40">mvn:joda-time/joda-time/2.9.9</bundle>
+    </feature>
+
+    <feature name="swagger" version="1.5.16">
+        <feature>guava</feature>
+        <feature prerequisite="true">wrap</feature>
+
+        <bundle start-level="40">mvn:org.yaml/snakeyaml/1.17</bundle>
+
+        <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-databind/2.9.2</bundle>
+        <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-annotations/2.9.2</bundle>
+        <bundle start-level="42">mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/2.8.9</bundle>
+
+        <bundle start-level="30">mvn:javax.validation/validation-api/1.1.0.Final</bundle>
+
+        <bundle start-level="30">mvn:org.apache.commons/commons-lang3/3.2.1</bundle>
+
+        <bundle start-level="50">mvn:io.swagger/swagger-annotations/1.5.16</bundle>
+        <bundle start-level="50">mvn:io.swagger/swagger-models/1.5.16</bundle>
+        <bundle start-level="50">mvn:io.swagger/swagger-core/1.5.16</bundle>
+
+        <bundle start-level="50"><![CDATA[wrap:mvn:io.swagger/swagger-parser/1.0.32$Bundle-ManifestVersion=2&Bundle-License=http://www.apache.org/licenses/LICENSE-2.0.html&Bundle-Name=swagger-parser&Bundle-SymbolicName=io.swagger.parser&Bundle-Version=1.0.32]]></bundle>
     </feature>
 
     <feature name="json-schema-validator" version="2.2.8">
@@ -38,26 +54,12 @@
 
         <bundle start-level="45"><![CDATA[wrap:mvn:org.mozilla/rhino/1.7.7.1$Bundle-ManifestVersion=2&Bundle-Name=Rhino&Bundle-SymbolicName=org.mozilla.rhino&Bundle-Version=1.7.7.1]]></bundle>
         <bundle start-level="45">mvn:com.googlecode.libphonenumber/libphonenumber/8.7.0</bundle>
-        <bundle start-level="30">mvn:com.google.code.findbugs/annotations/3.0.1</bundle> <!-- TODO: remove dependency! -->
         <bundle start-level="45">mvn:net.sf.jopt-simple/jopt-simple/5.0.4</bundle>
 
-        <bundle start-level="55">mvn:com.github.java-json-tools/json-schema-validator/2.2.8</bundle>
+        <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-core/2.9.2</bundle>
+        <bundle start-level="50">mvn:javax.mail/mailapi/1.4.3</bundle>
+
         <bundle start-level="50">mvn:com.github.java-json-tools/json-schema-core/1.2.8</bundle>
-    </feature>
-
-    <feature name="swagger" version="1.5.16">
-        <feature>guava</feature>
-        <feature prerequisite="true">wrap</feature>
-
-        <bundle start-level="40">mvn:org.yaml/snakeyaml/1.17</bundle>
-        <bundle start-level="42">mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/2.8.9</bundle>
-
-        <bundle start-level="30">mvn:javax.validation/validation-api/1.1.0.Final</bundle>
-
-        <bundle start-level="50">mvn:io.swagger/swagger-annotations/1.5.16</bundle>
-        <bundle start-level="50">mvn:io.swagger/swagger-models/1.5.16</bundle>
-        <bundle start-level="50">mvn:io.swagger/swagger-core/1.5.16</bundle>
-
-        <bundle start-level="50"><![CDATA[wrap:mvn:io.swagger/swagger-parser/1.0.32$Bundle-ManifestVersion=2&Bundle-License=http://www.apache.org/licenses/LICENSE-2.0.html&Bundle-Name=swagger-parser&Bundle-SymbolicName=io.swagger.parser&Bundle-Version=1.0.32]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.8.1-SNAPSHOT$Bundle-ManifestVersion=2&Bundle-Version=2.2.8.1-SNAPSHOT&Bundle-Name=schema-valid]]></bundle>
     </feature>
 </features>

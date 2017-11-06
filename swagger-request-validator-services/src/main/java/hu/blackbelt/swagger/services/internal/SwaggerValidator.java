@@ -13,7 +13,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class SwaggerValidator implements Validator {
     public @interface Config {
 
         @AttributeDefinition(name = "AGS server time zone (format: continent/city)")
-        String swaggerURI();
+        String swaggerURI(); 
     }
 
     private String swaggerURI;
@@ -49,7 +48,6 @@ public class SwaggerValidator implements Validator {
         validator = null;
     }
 
-    @Nonnull
     @Override
     public List<ValidationError> validate(Object request) {
         final List<ValidationError> errors = new LinkedList<>();
