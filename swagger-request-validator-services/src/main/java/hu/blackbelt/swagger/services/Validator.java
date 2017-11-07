@@ -14,5 +14,5 @@ public interface Validator {
      * @param request HTTP request
      * @return list of validation errors
      */
-    List<ValidationError> validate(HttpServletRequest request, Object body);
+    List<ValidationError> validate(HttpServletRequest request);
 }

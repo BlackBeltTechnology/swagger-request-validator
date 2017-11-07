@@ -3,8 +3,6 @@ package hu.blackbelt.swagger.services.internal;
 import com.atlassian.oai.validator.SwaggerRequestResponseValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.ValidationReport;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.blackbelt.swagger.services.ValidationError;
 import hu.blackbelt.swagger.services.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +14,12 @@ import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
 @Slf4j
@@ -53,7 +53,7 @@ public class SwaggerValidator implements Validator {
     }
 
     @Override
-    public List<ValidationError> validate(HttpServletRequest request, Object body) {
+    public List<ValidationError> validate(HttpServletRequest request) {
         final List<ValidationError> errors = new LinkedList<>();
 
         final SimpleRequest.Builder builder;
@@ -75,8 +75,10 @@ public class SwaggerValidator implements Validator {
         }
 
         final Enumeration<String> headerNames = request.getHeaderNames();
+        String headerName;
         while (headerNames.hasMoreElements()) {
-            builder.withHeader(request.getHeader(headerNames.nextElement()));
+            headerName = headerNames.nextElement();
+            builder.withHeader(headerName, request.getHeader(headerName));
         }
 
         String queryParams = request.getQueryString();
@@ -84,15 +86,15 @@ public class SwaggerValidator implements Validator {
             builder.withQueryParam(queryParams);
         }
 
-        if (body != null) {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                String bodyString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
-
-                builder.withBody(bodyString);
-            } catch (JsonProcessingException ex) {
-                log.warn("Request body parsing failed.", ex);
+        // TODO: can we read this stream after CXF?
+        String body = null;
+        try {
+            body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            if (body != null) {
+                builder.withBody(body);
             }
+        } catch (IOException ex) {
+            log.warn("Request body reading failed.", ex);
         }
 
         final ValidationReport report = validator.validateRequest(builder.build());
