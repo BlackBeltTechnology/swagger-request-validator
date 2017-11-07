@@ -1,5 +1,6 @@
 package hu.blackbelt.swagger.services;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -13,5 +14,5 @@ public interface Validator {
      * @param request HTTP request
      * @return list of validation errors
      */
-    List<ValidationError> validate(Object request); // TODO: change type to HTTP
+    List<ValidationError> validate(HttpServletRequest request, Object body);
 }

@@ -3,6 +3,8 @@ package hu.blackbelt.swagger.services.internal;
 import com.atlassian.oai.validator.SwaggerRequestResponseValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.ValidationReport;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.blackbelt.swagger.services.ValidationError;
 import hu.blackbelt.swagger.services.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,9 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class SwaggerValidator implements Validator {
     public @interface Config {
 
         @AttributeDefinition(name = "AGS server time zone (format: continent/city)")
-        String swaggerURI(); 
+        String swaggerURI();
     }
 
     private String swaggerURI;
@@ -49,22 +53,47 @@ public class SwaggerValidator implements Validator {
     }
 
     @Override
-    public List<ValidationError> validate(Object request) {
+    public List<ValidationError> validate(HttpServletRequest request, Object body) {
         final List<ValidationError> errors = new LinkedList<>();
 
-        // TODO: validate request
-
         final SimpleRequest.Builder builder;
-        final String action = "action-from-request";
-        if ("GET".equals(action)) {
-            builder = SimpleRequest.Builder.get("path-from-request");
-        } else {
-            throw new IllegalArgumentException("Invalid HTTP action: " + action);
+        final String action = request.getMethod();
+        final String requestUrl = request.getRequestURL().toString();
+
+        switch (action) {
+            case "GET":
+                builder = SimpleRequest.Builder.get(requestUrl);
+                break;
+            case "POST":
+                builder = SimpleRequest.Builder.post(requestUrl);
+                break;
+            case "PUT":
+                builder = SimpleRequest.Builder.put(requestUrl);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid HTTP action: " + action);
         }
 
-        //TODO: for builder.withHeader()
-        //TODO: for builder.withQueryParam()
-        //TODO: set builder.withBody()
+        final Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            builder.withHeader(request.getHeader(headerNames.nextElement()));
+        }
+
+        String queryParams = request.getQueryString();
+        if (queryParams != null) {
+            builder.withQueryParam(queryParams);
+        }
+
+        if (body != null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String bodyString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+
+                builder.withBody(bodyString);
+            } catch (JsonProcessingException ex) {
+                log.warn("Request body parsing failed.", ex);
+            }
+        }
 
         final ValidationReport report = validator.validateRequest(builder.build());
 
@@ -73,7 +102,7 @@ public class SwaggerValidator implements Validator {
                 final ValidationError error = new ValidationError();
                 error.setKey(msg.getKey());
                 error.setMessage(msg.getMessage());
-                //error.setPath(TODO);
+                error.setPath(requestUrl);
                 error.setArguments(Collections.unmodifiableList(msg.getAdditionalInfo()));
 
                 errors.add(error);
