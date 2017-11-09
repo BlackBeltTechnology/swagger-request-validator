@@ -3,22 +3,20 @@ package hu.blackbelt.swagger.services.internal;
 import com.atlassian.oai.validator.SwaggerRequestResponseValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.ValidationReport;
+import hu.blackbelt.swagger.services.SwaggerProvider;
 import hu.blackbelt.swagger.services.ValidationError;
 import hu.blackbelt.swagger.services.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.*;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
@@ -26,25 +24,47 @@ import java.util.stream.Collectors;
 public class SwaggerValidator implements Validator {
 
     @SuppressWarnings({"checkstyle:AbbreviationAsWordInName", "checkstyle:JavadocMethod"})
-    @ObjectClassDefinition(name = "Local settings")
+    @ObjectClassDefinition(name = "")
     public @interface Config {
 
-        @AttributeDefinition(name = "AGS server time zone (format: continent/city)")
-        String swaggerURI();
+        @AttributeDefinition(required = false, name = "Swagger URL")
+        String swaggerUrl();
+
+        @AttributeDefinition(required = false, name = "Swagger name", description = "Required SwaggerProvider component for this solution.")
+        String swaggerName();
     }
 
-    private String swaggerURI;
+    private String swaggerUrl;
+
+    private String swaggerName;
 
     private SwaggerRequestResponseValidator validator;
 
+    @Reference(policyOption = ReferencePolicyOption.GREEDY, cardinality = ReferenceCardinality.OPTIONAL)
+    private SwaggerProvider swaggerProvider;
+
     @Activate
     void start(final Config config) {
-        swaggerURI = config.swaggerURI();
+        swaggerUrl = config.swaggerUrl();
+        swaggerName = config.swaggerName();
 
-        // TODO: load Swagger definition
-        final String definition = null;
+        String definition = null;
 
-        validator = SwaggerRequestResponseValidator.createFor(definition).build();
+        if (swaggerUrl != null) {
+            definition = swaggerUrl;
+        } else {
+            Objects.requireNonNull(swaggerProvider, "Swagger provider service not exists yet.");
+            try (InputStream inputStream = swaggerProvider.getSwagger(swaggerName);
+                 Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name())) {
+                definition = scanner.useDelimiter("\\A").next();
+            } catch (IOException ex) {
+                log.warn("Failed to get swagger url by name.", ex);
+            }
+        }
+
+        if (definition != null) {
+            validator = SwaggerRequestResponseValidator.createFor(definition).build();
+        }
     }
 
     @Deactivate
