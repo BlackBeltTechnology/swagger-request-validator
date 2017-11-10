@@ -6,8 +6,9 @@
         <feature>swagger</feature>
 
         <feature prerequisite="true">wrap</feature>
+        <feature>pax-http-service</feature>
 
-        <bundle start-level="60"><![CDATA[wrap:mvn:com.atlassian.oai/swagger-request-validator-core/1.2.0$Bundle-ManifestVersion=2&Bundle-Name=Swagger rrrrrrrequest validator&Bundle-SymbolicName=com.atlassian.swagger-request-validator&Bundle-Version=1.2.0]]></bundle>
+        <bundle start-level="60"><![CDATA[wrap:mvn:com.atlassian.oai/swagger-request-validator-core/1.3.2$Bundle-ManifestVersion=2&Bundle-Name=Swagger request validator&Bundle-SymbolicName=com.atlassian.swagger-request-validator&Bundle-Version=1.3.2]]></bundle>
     </feature>
 
     <feature name="guava" version="16.0">
@@ -60,6 +61,6 @@
         <bundle start-level="50">mvn:javax.mail/mailapi/1.4.3</bundle>
 
         <bundle start-level="50">mvn:com.github.java-json-tools/json-schema-core/1.2.8</bundle>
-        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.8.1-SNAPSHOT$Bundle-ManifestVersion=2&Bundle-Version=2.2.8.1-SNAPSHOT&Bundle-Name=schema-valid]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.8.1-SNAPSHOT$Bundle-ManifestVersion=2&Bundle-Version=2.2.8.1-SNAPSHOT&Bundle-Name=json-schema-validator]]></bundle>
     </feature>
 </features>
