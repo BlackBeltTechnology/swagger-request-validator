@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.*;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,14 +108,15 @@ public class SwaggerValidator implements Validator {
 
         // TODO: can we read this stream after CXF?
         String body = null;
-        try {
+        /*try {
             body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
             if (body != null) {
                 builder.withBody(body);
             }
         } catch (IOException ex) {
             log.warn("Request body reading failed.", ex);
-        }
+        }*/
 
         final ValidationReport report = validator.validateRequest(builder.build());
 
