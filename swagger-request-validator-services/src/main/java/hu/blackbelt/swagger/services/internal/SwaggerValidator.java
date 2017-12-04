@@ -1,23 +1,22 @@
 package hu.blackbelt.swagger.services.internal;
 
 import com.atlassian.oai.validator.SwaggerRequestResponseValidator;
+import com.atlassian.oai.validator.model.Request;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.ValidationReport;
 import hu.blackbelt.swagger.services.SwaggerProvider;
 import hu.blackbelt.swagger.services.ValidationError;
 import hu.blackbelt.swagger.services.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
 @Slf4j
@@ -73,12 +72,12 @@ public class SwaggerValidator implements Validator {
     }
 
     @Override
-    public List<ValidationError> validate(HttpServletRequest request) {
+    public List<ValidationError> validate(HttpServletRequest request, String body) {
         final List<ValidationError> errors = new LinkedList<>();
 
         final SimpleRequest.Builder builder;
         final String action = request.getMethod();
-        final String requestUrl = request.getRequestURL().toString();
+        final String requestUrl = request.getServletPath() + request.getPathInfo();
 
         switch (action) {
             case "GET":
@@ -106,17 +105,9 @@ public class SwaggerValidator implements Validator {
             builder.withQueryParam(queryParams);
         }
 
-        // TODO: can we read this stream after CXF?
-        String body = null;
-        /*try {
-            body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-
-            if (body != null) {
-                builder.withBody(body);
-            }
-        } catch (IOException ex) {
-            log.warn("Request body reading failed.", ex);
-        }*/
+        if (body != null) {
+            builder.withBody(body);
+        }
 
         final ValidationReport report = validator.validateRequest(builder.build());
 
