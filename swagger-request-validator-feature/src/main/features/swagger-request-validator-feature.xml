@@ -14,7 +14,6 @@
 
     <feature name="guava" version="20.0">
         <bundle start-level="20">mvn:com.google.guava/guava/20.0</bundle>
-        <!--<bundle start-level="20"><![CDATA[wrap:mvn:com.google.guava/guava/20.0$Bundle-ManifestVersion=2&Bundle-Name=Guava&Bundle-SymbolicName=com.google.guava-guava&Bundle-Version=30&Export-Package=com.google.common.*;version=16.0,*]]></bundle>-->
     </feature>
 
     <feature name="joda-time" version="2.9.9">
@@ -41,8 +40,7 @@
 
         <bundle start-level="50">mvn:io.swagger/swagger-annotations/1.5.16</bundle>
         <bundle start-level="50">mvn:io.swagger/swagger-models/1.5.16</bundle>
-        <!--<bundle start-level="50">mvn:io.swagger/swagger-core/1.5.16</bundle>-->
-        <bundle start-level="50"><![CDATA[wrap:mvn:io.swagger/swagger-core/1.5.16$Bundle-ManifestVersion=2&Bundle-Name=Swagger Core&Bundle-SymbolicName=io.swagger-swagger-core&Bundle-Version=1.5.16&Import-Package=com.google.common.*;version=20,*]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:io.swagger/swagger-core/1.5.16$Bundle-ManifestVersion=2&Bundle-Name=Swagger Core&Bundle-SymbolicName=io.swagger-swagger-core&Bundle-Version=1.5.16&Import-Package=com.google.common.*;version="[16,30)",*]]></bundle>
 
         <bundle start-level="50"><![CDATA[wrap:mvn:io.swagger/swagger-parser/1.0.32$Bundle-ManifestVersion=2&Bundle-License=http://www.apache.org/licenses/LICENSE-2.0.html&Bundle-Name=swagger-parser&Bundle-SymbolicName=io.swagger.parser&Bundle-Version=1.0.32]]></bundle>
     </feature>
@@ -55,9 +53,9 @@
 
         <bundle start-level="45">mvn:com.github.fge/btf/1.2</bundle>
         <bundle start-level="45">mvn:com.github.fge/msg-simple/1.1</bundle>
-        <bundle start-level="45">mvn:com.github.fge/uri-template/0.9</bundle>
-        <!--<bundle start-level="45">mvn:com.github.fge/jackson-coreutils/1.8</bundle>-->
-        <bundle start-level="60"><![CDATA[wrap:mvn:com.github.fge/jackson-coreutils/1.8$Bundle-ManifestVersion=2&Bundle-Name=Jackson Core Utils&Bundle-SymbolicName=com.github.fge-jackson-coreutils&Bundle-Version=1.8&Import-Package=com.google.common.*;version=20.0.0,*]]></bundle>
+        <bundle start-level="45"><![CDATA[wrap:mvn:com.github.fge/uri-template/0.9$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
+        <bundle start-level="60"><![CDATA[wrap:mvn:com.github.fge/jackson-coreutils/1.8$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
+
 
         <bundle start-level="45"><![CDATA[wrap:mvn:org.mozilla/rhino/1.7.7.1$Bundle-ManifestVersion=2&Bundle-Name=Rhino&Bundle-SymbolicName=org.mozilla.rhino&Bundle-Version=1.7.7.1]]></bundle>
         <bundle start-level="45">mvn:com.googlecode.libphonenumber/libphonenumber/8.7.0</bundle>
@@ -65,7 +63,7 @@
 
         <bundle start-level="50">mvn:javax.mail/mailapi/1.4.3</bundle>
 
-        <bundle start-level="50">mvn:com.github.java-json-tools/json-schema-core/1.2.8</bundle>
-        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.8.1-SNAPSHOT$Bundle-ManifestVersion=2&Bundle-Version=2.2.8.1-SNAPSHOT&Bundle-Name=json-schema-validator]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-core/1.2.8$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.8.1-SNAPSHOT$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
     </feature>
 </features>
