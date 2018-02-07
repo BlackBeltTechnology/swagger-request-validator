@@ -1,16 +1,14 @@
 package hu.blackbelt.swagger.services;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletRequest;
 
 public interface SwaggerProvider {
 
     /**
-     * Return swagger url by name.
+     * Return Swagger file by name.
      *
-     * @param name OSGi bundle context
-     * @return Swagger url in input stream.
-     * @throws IOException
+     * @param filename Swagger filename
+     * @return content of Swagger file
      */
-    InputStream getSwagger(String name) throws IOException;
+    String getSwagger(final String filename, final HttpServletRequest request);
 }

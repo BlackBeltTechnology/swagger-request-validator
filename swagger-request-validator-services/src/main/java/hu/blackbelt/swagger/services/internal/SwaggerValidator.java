@@ -3,19 +3,17 @@ package hu.blackbelt.swagger.services.internal;
 import com.atlassian.oai.validator.SwaggerRequestResponseValidator;
 import com.atlassian.oai.validator.model.Request;
 import com.atlassian.oai.validator.model.SimpleRequest;
+import com.atlassian.oai.validator.model.SimpleResponse;
 import com.atlassian.oai.validator.report.ValidationReport;
 import hu.blackbelt.swagger.services.SwaggerProvider;
 import hu.blackbelt.swagger.services.ValidationError;
 import hu.blackbelt.swagger.services.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
@@ -23,7 +21,7 @@ import java.util.*;
 public class SwaggerValidator implements Validator {
 
     @SuppressWarnings({"checkstyle:AbbreviationAsWordInName", "checkstyle:JavadocMethod"})
-    @ObjectClassDefinition(name = "")
+    @ObjectClassDefinition(name = "Swagger validator settings")
     public @interface Config {
 
         @AttributeDefinition(required = false, name = "Swagger URL")
@@ -39,7 +37,7 @@ public class SwaggerValidator implements Validator {
 
     private SwaggerRequestResponseValidator validator;
 
-    @Reference(policyOption = ReferencePolicyOption.GREEDY, cardinality = ReferenceCardinality.OPTIONAL)
+    @Reference(policyOption = ReferencePolicyOption.GREEDY)
     private SwaggerProvider swaggerProvider;
 
     @Activate
@@ -47,22 +45,17 @@ public class SwaggerValidator implements Validator {
         swaggerUrl = config.swaggerUrl();
         swaggerName = config.swaggerName();
 
-        String definition = null;
-
+        if (swaggerUrl == null && swaggerName == null) {
+            throw new IllegalArgumentException("Swagger URL and Swagger name are missing from config file.");
+        }
         if (swaggerUrl != null) {
-            definition = swaggerUrl;
+            validator = SwaggerRequestResponseValidator.createFor(swaggerUrl).build();
         } else {
             Objects.requireNonNull(swaggerProvider, "Swagger provider service not exists yet.");
-            try (InputStream inputStream = swaggerProvider.getSwagger(swaggerName);
-                 Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name())) {
-                definition = scanner.useDelimiter("\\A").next();
-            } catch (IOException ex) {
-                log.warn("Failed to get swagger url by name.", ex);
+            final String definition = swaggerProvider.getSwagger(swaggerName, null);
+            if (definition != null) {
+                validator = SwaggerRequestResponseValidator.createFor(definition).build();
             }
-        }
-
-        if (definition != null) {
-            validator = SwaggerRequestResponseValidator.createFor(definition).build();
         }
     }
 
@@ -72,12 +65,12 @@ public class SwaggerValidator implements Validator {
     }
 
     @Override
-    public List<ValidationError> validate(HttpServletRequest request, String body) {
+    public List<ValidationError> validate(final HttpServletRequest request, final String body) {
         final List<ValidationError> errors = new LinkedList<>();
 
         final SimpleRequest.Builder builder;
         final String action = request.getMethod();
-        final String requestUrl = request.getServletPath() + request.getPathInfo();
+        final String requestUrl = request.getPathInfo();
 
         switch (action) {
             case "GET":
@@ -100,7 +93,7 @@ public class SwaggerValidator implements Validator {
             builder.withHeader(headerName, request.getHeader(headerName));
         }
 
-        String queryParams = request.getQueryString();
+        final String queryParams = request.getQueryString();
         if (queryParams != null) {
             builder.withQueryParam(queryParams);
         }
@@ -124,6 +117,39 @@ public class SwaggerValidator implements Validator {
 
             if (log.isDebugEnabled()) {
                 log.debug("RESTful request validation failed, errors: " + errors);
+            }
+        }
+
+        return errors;
+    }
+
+    @Override
+    public List<ValidationError> validate(String method, String path, Integer responseCode, Map<String, Object> headers, String body) {
+        final List<ValidationError> errors = new LinkedList<>();
+
+        final SimpleResponse.Builder builder = SimpleResponse.Builder.status(responseCode);
+
+        headers.forEach((hn,hv) -> builder.withHeader(hn, (List)hv));
+
+        if (body != null) {
+            builder.withBody(body);
+        }
+
+        final ValidationReport report = validator.validateResponse(path, Request.Method.valueOf(method), builder.build());
+
+        if (report.hasErrors()) {
+            for (final ValidationReport.Message msg : report.getMessages()) {
+                final ValidationError error = new ValidationError();
+                error.setKey(msg.getKey());
+                error.setMessage(msg.getMessage());
+                error.setPath(path);
+                error.setArguments(Collections.unmodifiableList(msg.getAdditionalInfo()));
+
+                errors.add(error);
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("RESTful response validation failed, errors: " + errors);
             }
         }
 
