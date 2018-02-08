@@ -63,7 +63,7 @@
 
         <bundle start-level="50">mvn:javax.mail/mailapi/1.4.3</bundle>
 
-        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-core/1.2.8$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
-        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.8.1-SNAPSHOT$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-core/1.2.9-SNAPSHOT$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
+        <bundle start-level="50"><![CDATA[wrap:mvn:com.github.java-json-tools/json-schema-validator/2.2.9-SNAPSHOT$overwrite=merge&Import-Package=com.google.common*;version="[16,30)",*]]></bundle>
     </feature>
 </features>
