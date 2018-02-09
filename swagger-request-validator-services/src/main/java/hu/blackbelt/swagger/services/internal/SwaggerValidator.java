@@ -115,8 +115,8 @@ public class SwaggerValidator implements Validator {
                 errors.add(error);
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("RESTful request validation failed, errors: " + errors);
+            if (log.isTraceEnabled()) {
+                log.trace("RESTful request validation failed, errors: " + errors);
             }
         }
 
@@ -148,8 +148,8 @@ public class SwaggerValidator implements Validator {
                 errors.add(error);
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("RESTful response validation failed, errors: " + errors);
+            if (log.isTraceEnabled()) {
+                log.trace("RESTful response validation failed, errors: " + errors);
             }
         }
 
