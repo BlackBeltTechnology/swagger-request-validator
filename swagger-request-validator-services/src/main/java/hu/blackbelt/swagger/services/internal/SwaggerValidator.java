@@ -82,6 +82,21 @@ public class SwaggerValidator implements Validator {
             case "PUT":
                 builder = SimpleRequest.Builder.put(requestUrl);
                 break;
+            case "DELETE":
+                builder = SimpleRequest.Builder.delete(requestUrl);
+                break;
+            case "OPTIONS":
+                builder = SimpleRequest.Builder.options(requestUrl);
+                break;
+            case "HEAD":
+                builder = SimpleRequest.Builder.head(requestUrl);
+                break;
+            case "PATCH":
+                builder = SimpleRequest.Builder.patch(requestUrl);
+                break;
+            case "TRACE":
+                builder = SimpleRequest.Builder.trace(requestUrl);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid HTTP action: " + action);
         }
