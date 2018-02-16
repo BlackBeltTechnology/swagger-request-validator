@@ -108,10 +108,7 @@ public class SwaggerValidator implements Validator {
             builder.withHeader(headerName, request.getHeader(headerName));
         }
 
-        final String queryParams = request.getQueryString();
-        if (queryParams != null) {
-            builder.withQueryParam(queryParams);
-        }
+        request.getParameterMap().forEach((parameterName, parameterValues) -> builder.withQueryParam((String)parameterName, (String[])parameterValues));
 
         if (body != null) {
             builder.withBody(body);
