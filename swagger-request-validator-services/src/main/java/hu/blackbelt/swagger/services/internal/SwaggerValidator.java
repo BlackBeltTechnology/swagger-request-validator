@@ -15,6 +15,8 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
 @Slf4j
@@ -141,7 +143,7 @@ public class SwaggerValidator implements Validator {
 
         final SimpleResponse.Builder builder = SimpleResponse.Builder.status(responseCode);
 
-        headers.forEach((hn,hv) -> builder.withHeader(hn, (List)hv));
+        headers.forEach((hn,hv) -> builder.withHeader(hn, Stream.of((List)hv).map(String::valueOf).collect(Collectors.toList())));
 
         if (body != null) {
             builder.withBody(body);
