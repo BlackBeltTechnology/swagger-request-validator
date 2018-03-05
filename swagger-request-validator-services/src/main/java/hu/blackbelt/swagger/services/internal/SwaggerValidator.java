@@ -143,7 +143,7 @@ public class SwaggerValidator implements Validator {
 
         final SimpleResponse.Builder builder = SimpleResponse.Builder.status(responseCode);
 
-        headers.forEach((hn,hv) -> builder.withHeader(hn, Stream.of((List)hv).map(String::valueOf).collect(Collectors.toList())));
+        headers.forEach((hn, hv) -> builder.withHeader(hn, (List<String>)((List)hv).stream().map(String::valueOf).collect(Collectors.toList())));
 
         if (body != null) {
             builder.withBody(body);
