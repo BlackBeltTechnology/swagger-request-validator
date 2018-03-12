@@ -11,14 +11,15 @@ import hu.blackbelt.swagger.services.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
+@Designate(ocd = SwaggerValidator.Config.class)
 @Slf4j
 public class SwaggerValidator implements Validator {
 
